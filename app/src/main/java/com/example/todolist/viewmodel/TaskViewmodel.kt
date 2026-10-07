@@ -29,6 +29,12 @@ class TaskViewmodel(application: Application): AndroidViewModel(application) {
         }
     }
 
+    fun updatetask(task : Todo_Items){
+        viewModelScope.launch {
+            repo.update(task)
+        }
+    }
+
     fun deletetask(task: Todo_Items){
         viewModelScope.launch {
             repo.delete(task)

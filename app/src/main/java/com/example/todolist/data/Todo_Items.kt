@@ -9,6 +9,6 @@ data class Todo_Items(
 
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
-    val description: String,
-    val date: String,
+    val title: String,
+    val isDone: Boolean = false
 )
