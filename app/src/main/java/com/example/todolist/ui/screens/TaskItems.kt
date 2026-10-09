@@ -1,6 +1,8 @@
 package com.example.todolist.ui.screens
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,97 +18,151 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todolist.data.Todo_Items
+import com.example.todolist.ui.theme.green
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun TodoListItems(
-    items : Todo_Items,
+    items: Todo_Items,
     onEditTask: () -> Unit,
     onDeleteTask: () -> Unit,
-    onChecked: (Boolean) -> Unit
-
+    onChecked: (Boolean) -> Unit,
 ) {
+    val formattedDate =
+        remember(items.onCreated) {
+            SimpleDateFormat("dd/MM/yyyy - HH:mm", Locale.getDefault()).format(Date(items.onCreated))
+        }
 
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = if (items.isDone) Color.LightGray else Color.White
-        ),
-        shape = RoundedCornerShape(20.dp),
-        border = BorderStroke(3.dp, Color.Gray)
-    ) {
+    Column {
+        Text(
+            text = formattedDate,
+            modifier = Modifier.padding(start = 18.dp),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Spacer(modifier = Modifier.width(7.dp))
 
-        //is Checked button
-        Row(
-            modifier = Modifier.fillMaxWidth()
-                .padding(15.dp),
-            verticalAlignment = Alignment.CenterVertically
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors =
+                CardDefaults.cardColors(
+                    containerColor =
+                        if (isSystemInDarkTheme()) {
+                            if (items.isDone) {
+                                Color.LightGray
+                            } else {
+                                Color.DarkGray
+                            }
+                        } else {
+                            if (items.isDone) {
+                                Color.LightGray
+                            } else {
+                                Color.White
+                            }
+                        },
+                ),
+            shape = RoundedCornerShape(20.dp),
+            border = if (isSystemInDarkTheme()) BorderStroke(0.dp, Color.White) else BorderStroke(3.dp, Color.Gray),
         ) {
-            IconButton(
-                onClick = {onChecked(!items.isDone)}
+            Row(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(15.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Icon(
-                    imageVector = if(items.isDone) Icons.Filled.Circle
-                        else Icons.Default.RadioButtonUnchecked,
-                    contentDescription = null,
-                    tint = if (items.isDone) Color.Green else Color.Gray
-                )
-            }
-
-            Spacer(
-                modifier = Modifier.width(7.dp)
-            )
-
-            Text(
-                text = items.title,
-                fontSize = 17.sp,
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier.weight(1f),
-                color = if (items.isDone) Color.Gray else Color.DarkGray,
-                textDecoration = if (items.isDone) TextDecoration.LineThrough else null
-
-            )
-
-            Row {
-
                 IconButton(
-                    onClick = onEditTask,
-                    enabled = !items.isDone
+                    onClick = { onChecked(!items.isDone) },
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Edit,
+                        imageVector =
+                            if (items.isDone) {
+                                Icons.Filled.Circle
+                            } else {
+                                Icons.Default.RadioButtonUnchecked
+                            },
                         contentDescription = null,
-                        tint = Color.DarkGray
+                        tint = if (items.isDone) green else Color.Gray,
                     )
                 }
 
+                Spacer(
+                    modifier = Modifier.width(7.dp),
+                )
+
+                Text(
+                    text = items.title,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.weight(1f),
+                    color =
+                        if (isSystemInDarkTheme()) {
+                            if (items.isDone) {
+                                Color.Gray
+                            } else {
+                                Color.White
+                            }
+                        } else {
+                            if (items.isDone) Color.Gray else Color.DarkGray
+                        },
+                    textDecoration = if (items.isDone) TextDecoration.LineThrough else null,
+                )
+
+                Row {
+                    IconButton(
+                        onClick = onEditTask,
+                        enabled = !items.isDone,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = null,
+                            tint =
+                                if (isSystemInDarkTheme()) {
+                                    if (items.isDone) {
+                                        Color.DarkGray
+                                    } else {
+                                        Color.White
+                                    }
+                                } else {
+                                    Color.DarkGray
+                                },
+                        )
+                    }
 
                     IconButton(
-                        onClick = onDeleteTask
+                        onClick = onDeleteTask,
                     ) {
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = null,
-                            tint = Color.DarkGray
-
+                            tint =
+                                if (isSystemInDarkTheme()) {
+                                    if (items.isDone) {
+                                        Color.DarkGray
+                                    } else {
+                                        Color.White
+                                    }
+                                } else {
+                                    Color.DarkGray
+                                },
                         )
                     }
-
-
-
+                }
             }
-
         }
     }
-
 }

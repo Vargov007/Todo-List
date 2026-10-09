@@ -1,6 +1,7 @@
 package com.example.todolist.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.todolist.data.Todo_Items
+import com.example.todolist.ui.theme.black
 import com.example.todolist.ui.theme.lightBlue
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,7 +45,7 @@ fun TaskListEditor(
 
     ModalBottomSheet(
         onDismissRequest = onCancel,
-        containerColor = Color.White,
+        containerColor = if (isSystemInDarkTheme()) Color.LightGray else Color.White,
     ) {
         Column(
             modifier =
@@ -53,9 +55,10 @@ fun TaskListEditor(
                     .navigationBarsPadding(),
         ) {
             Text(
-                text = if (task == null)"Create New Task"  else "Edit This Task",
+                text = if (task == null) "Create New Task" else "Edit This Task",
                 fontSize = 23.sp,
                 fontWeight = FontWeight.Bold,
+                color = black,
             )
 
             Spacer(
@@ -66,6 +69,7 @@ fun TaskListEditor(
                 value = textName,
                 onValueChange = { textName = it },
                 modifier = Modifier.fillMaxWidth(),
+
                 placeholder = {
                     Text(
                         text = "What's needs to be done",
@@ -75,6 +79,8 @@ fun TaskListEditor(
                     OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = Color.DarkGray,
                         unfocusedBorderColor = Color.Gray,
+                        focusedPlaceholderColor = Color.DarkGray,
+                        unfocusedPlaceholderColor = Color.DarkGray,
                     ),
                 shape = RoundedCornerShape(20.dp),
             )
@@ -84,7 +90,11 @@ fun TaskListEditor(
             )
 
             IconButton(
-                onClick = { onSave(textName.trim()) },
+                onClick = {
+                    if (textName.isNotBlank()) {
+                        onSave(textName.trim())
+                    }
+                },
                 modifier =
                     Modifier
                         .background(lightBlue, CircleShape)

@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase // 1. Add this import
 import com.example.todolist.dao_repo.TaskDao
 import com.example.todolist.data.Todo_Items
 
-@Database([Todo_Items::class], version = 2)
+@Database([Todo_Items::class], version = 3)
 abstract class TaskDatabase : RoomDatabase() { // 2. Add : RoomDatabase()
 
     abstract fun taskdao(): TaskDao
